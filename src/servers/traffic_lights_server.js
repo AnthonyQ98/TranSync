@@ -21,3 +21,6 @@ trafficLightsClient.changeSignalTimings({ request }, (err, response) => {
         console.log('Response:', response);
     }
 });
+
+module.exports = trafficLightsClient;
+
