@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package PublicTransport
+package PublicTransport;
 
 service PublicTransport {
     rpc GetNextBus (NextBusRequest) returns (NextBusResponse) {}

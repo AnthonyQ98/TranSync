@@ -1,10 +1,10 @@
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 
-const packageDefinitionTraffic = protoLoader.loadSync('traffic_lights.proto');
+const packageDefinitionTraffic = protoLoader.loadSync('protos/traffic_lights.proto');
 const trafficLightsProto = grpc.loadPackageDefinition(packageDefinitionTraffic).TrafficLights;
 
-const trafficLightsClient = new trafficLightsProto('localhost:50051', grpc.credentials.createInsecure());
+const trafficLightsClient = new trafficLightsProto.TrafficLights('localhost:50051', grpc.credentials.createInsecure());
 
 const request = {
     intersection_id: "AnthonysAmazingIntersection",
