@@ -1,26 +1,37 @@
 const grpc = require('@grpc/grpc-js');
-const protoLoader = require('@grpc/proto-loader');
+const protoloader = require('@grpc/proto-loader');
+const packageDefinition = protoloader.loadSync('protos/traffic_lights.proto', {});
+const trafficLightsProto = grpc.loadPackageDefinition(packageDefinition).TrafficLights;
 
-const packageDefinitionTraffic = protoLoader.loadSync('protos/traffic_lights.proto');
-const trafficLightsProto = grpc.loadPackageDefinition(packageDefinitionTraffic).TrafficLights;
+function changeSignalRequest(call, callback) {
+    const result = call.request.number1 + call.request.number2;
+    callback(null, {result});
+}
 
-const trafficLightsClient = new trafficLightsProto.TrafficLights('localhost:50051', grpc.credentials.createInsecure());
+function changeSignalTimings(call, callback) {
+    const request = call.request;
+    
+    console.log('Received request:', request);
 
-const request = {
-    intersection_id: "AnthonysAmazingIntersection",
-    signal_timings: [
-        { color: "GREEN", duration_seconds: 30 },
-        { color: "RED", duration_seconds: 20 },
-    ]
+    const response = {
+        message: "Signal timings changed successfully"
+    };
+    callback(null, response);
+}
+
+
+const server = new grpc.Server();
+const serverAddr = '0.0.0.0:50051';
+
+
+// Add all services in a single object
+const services = {
+    ChangeSignalRequest: changeSignalRequest,
+    ChangeSignalTimings: changeSignalTimings
 };
+server.addService(trafficLightsProto.TrafficLights.service, services);
 
-trafficLightsClient.changeSignalTimings({ request }, (err, response) => {
-    if (err) {
-        console.error('Error:', err);
-    } else {
-        console.log('Response:', response);
-    }
+server.bindAsync(serverAddr, grpc.ServerCredentials.createInsecure(), () => {
+    server.start()
+    console.log("Server running at " + serverAddr)
 });
-
-module.exports = trafficLightsClient;
-
