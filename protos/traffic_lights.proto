@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package TrafficLights
+
+service TrafficLights {
+    rpc ChangeSignalTimings (ChangeSignalRequest) returns (ChangeSignalResponse) {}
+}
+
+message ChangeSignalRequest {
+    string intersection_id = 1;
+    repeated SignalTiming signal_timings = 2;
+}
+
+message SignalTiming {
+    string color = 1;
+    int32 duration_seconds = 2;
+}
+
+message ChangeSignalResponse {
+    string message = 1;
+}

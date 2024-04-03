@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package Parking
+
+service Parking {
+    rpc CheckAvailability (CheckAvailabilityRequest) returns (CheckAvailabilityResponse) {}
+    rpc ReserveSpot (ReserveSpotRequest) returns (ReserveSpotResponse) {}
+}
+
+message CheckAvailabilityRequest {
+    string parking_lot_id = 1;
+}
+
+message CheckAvailabilityResponse {
+    int32 available_spots = 1;
+}
+
+message ReserveSpotRequest {
+    string parking_lot_id = 1;
+    int32 num_spots = 2;
+}
+
+message ReserveSpotResponse {
+    string message = 1;
+}
