@@ -1,0 +1,11 @@
+{
+  "name": "trans-sync",
+  "version": "1.0.0",
+  "description": "Anthonys transport synchronization service using gRPC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
