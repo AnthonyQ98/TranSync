@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package TrafficLights;
+package trafficlights;
 
 service TrafficLights {
     rpc ChangeSignalTimings (ChangeSignalRequest) returns (ChangeSignalResponse) {}
