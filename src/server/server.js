@@ -1,8 +1,8 @@
 const grpc = require('@grpc/grpc-js');
 const protoloader = require('@grpc/proto-loader');
-const { changeSignalTimings } = require('./traffic_lights');
-const { getNextBus } = require('./public_transport');
-const { checkAvailability, reserveSpot } = require('./parking');
+const { changeSignalTimings } = require('../services/traffic_lights');
+const { getNextBus } = require('../services/public_transport');
+const { checkAvailability, reserveSpot } = require('../services/parking');
 
 
 const trafficLightsPackageDefinition = protoloader.loadSync('protos/traffic_lights.proto', {});
