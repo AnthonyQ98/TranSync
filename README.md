@@ -8,6 +8,6 @@ Public Transport Service: Also implemented as a gRPC server, this service manage
 
 Main Controller: This is a client application responsible for discovering and interacting with the Traffic Lights and Parking services. It utilizes gRPC clients to make requests to these services based on traffic and parking demands.
 
-For service discovery, the main controller uses libraries like grpc-dnssd to locate and connect to the Traffic Lights and Parking services dynamically.
+The main controller acts as a client to interact with the various services and the server on behalf of a client.
 
 TransSync enables efficient transportation management through real-time coordination of traffic lights and parking allocation, demonstrating the capabilities of a smart automated environment within urban settings.
