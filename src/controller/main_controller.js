@@ -16,8 +16,13 @@ const parkingProto = grpc.loadPackageDefinition(parkingPackageDefinition).Parkin
 function showMainMenu() {
     console.log("Transport Synchronization System:");
     console.log("1) Traffic Lights");
-    console.log("2) Traffic");
+    console.log("2) Parking");
     console.log("3) Public Transport");
+}
+
+function showParkingSubMenu() {
+    console.log("1) Check Availability");
+    console.log("2) Reserve Spot");
 }
 
 
@@ -63,6 +68,47 @@ async function handlePublicTransport() {
     });
 }
 
+async function handleParkingCheckAvailability() {
+    const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
+    const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
+
+
+    const body = {
+        parkingLotId: parkingLotId,
+    };
+
+    client.CheckAvailability(body, function (err, response) {
+        if (err) {
+            console.error(err);
+        } else {
+            message = `Available spots at ${parkingLotId}: ${response.availableSpots}`;
+            console.log(message);
+        }
+    });
+}
+
+async function handleParkingReserveSpot() {
+    const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
+    const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
+    const numSpots = await new Promise((resolve) => readline.question('Which spot would you like to reserve: ', resolve));
+
+
+    const body = {
+        parkingLotId: parkingLotId,
+        numSpots: parseInt(numSpots)
+    };
+
+    client.ReserveSpot(body, function (err, response) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(response.message);
+        }
+    });
+}
+
+
+
 
 function main() {
     showMainMenu();
@@ -73,40 +119,30 @@ function main() {
                 await handleTrafficLights();
                 break;
             case '2':
-                await handleTraffic();
+                showParkingSubMenu();
+                readline.question('Enter your choice: ', async function (choice2) {
+                    switch (choice2) {
+                        case '1':
+                            await handleParkingCheckAvailability();
+                            break;
+                        case '2':
+                            await handleParkingReserveSpot();
+                            break;
+                        default:
+                            console.log("Invalid choice");
+                    }
+                    readline.close();
+                });
                 break;
             case '3':
                 await handlePublicTransport();
+                readline.close();
                 break;
             default:
                 console.log("Invalid choice");
+                readline.close();
         }
-        readline.close();
     });
-
-    const client3 = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
-    const body3_1 = {
-        parkingLotId: "NCI_STAFF_PARKING",
-    };
-    const body3_2 = {
-        parkingLotId: "NCI_STAFF_PARKING",
-        numSpots: 12
-    };
-    client3.CheckAvailability(body3_1, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('Checking availability of parking at ' + body3_2.parkingLotId + ':', JSON.stringify(response.availableSpots) + ' spots remaining.');
-        }
-    })
-    client3.ReserveSpot(body3_2, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(response.message);
-        }
-    })
-
 }
 
 main();
