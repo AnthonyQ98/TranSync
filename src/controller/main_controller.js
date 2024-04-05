@@ -62,7 +62,12 @@ async function handlePublicTransport() {
         if (err) {
             console.error(err);
         } else {
-            message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
+            if (response.busNumber == "") {
+                message = "Invalid bus number"
+            } else {
+                message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
+            }
+
             console.log(message);
         }
     });
