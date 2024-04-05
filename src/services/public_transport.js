@@ -4,8 +4,10 @@ function getNextBus(call, callback) {
 
     const response = {
         busNumber: "308",
-        arrivalTime: "13:20"
+        arrivalTime: "13:20",
     };
+    message = `Bus Stop ID: ${request.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
+    console.log(response);
     callback(null, response);
 }
 

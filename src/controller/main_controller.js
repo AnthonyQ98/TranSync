@@ -44,6 +44,25 @@ async function handleTrafficLights() {
     });
 }
 
+async function handlePublicTransport() {
+    const client = new publicTransportProto.PublicTransport('localhost:50051', grpc.credentials.createInsecure());
+    const busStopId = await new Promise((resolve) => readline.question('Enter Bus Stop ID: ', resolve));
+
+
+    const body = {
+        busStopId: busStopId,
+    };
+
+    client.GetNextBus(body, function (err, response) {
+        if (err) {
+            console.error(err);
+        } else {
+            message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
+            console.log(message);
+        }
+    });
+}
+
 
 function main() {
     showMainMenu();
@@ -64,20 +83,6 @@ function main() {
         }
         readline.close();
     });
-
-
-    const client2 = new publicTransportProto.PublicTransport('localhost:50051', grpc.credentials.createInsecure());
-    const body2 = {
-        busStopId: "12"
-    };
-    client2.GetNextBus(body2, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('Public transport next bus result:', response);
-        }
-    })
-
 
     const client3 = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
     const body3_1 = {
