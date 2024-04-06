@@ -82,42 +82,52 @@ async function handlePublicTransport() {
 }
 
 async function handleParkingCheckAvailability() {
-    const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
-    const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
+    try {
+        const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
+        const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
 
 
-    const body = {
-        parkingLotId: parkingLotId,
-    };
+        const body = {
+            parkingLotId: parkingLotId,
+        };
 
-    client.CheckAvailability(body, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            message = `Available spots at ${parkingLotId}: ${response.availableSpots}`;
-            console.log(message);
-        }
-    });
+        client.CheckAvailability(body, function (err, response) {
+            if (err) {
+                console.error(err);
+            } else {
+                message = `Available spots at ${parkingLotId}: ${response.availableSpots}`;
+                console.log(message);
+            }
+        });
+    } catch (error) {
+        console.error('Error checking parking availability:', error.message)
+    }
+
 }
 
 async function handleParkingReserveSpot() {
-    const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
-    const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
-    const numSpots = await new Promise((resolve) => readline.question('Which spot would you like to reserve: ', resolve));
+    try {
+        const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
+        const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
+        const numSpots = await new Promise((resolve) => readline.question('Which spot would you like to reserve: ', resolve));
 
 
-    const body = {
-        parkingLotId: parkingLotId,
-        numSpots: parseInt(numSpots)
-    };
+        const body = {
+            parkingLotId: parkingLotId,
+            numSpots: parseInt(numSpots)
+        };
 
-    client.ReserveSpot(body, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(response.message);
-        }
-    });
+        client.ReserveSpot(body, function (err, response) {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(response.message);
+            }
+        });
+    } catch (error) {
+        console.error('Error handling parking spot reservation:', error.message)
+    }
+
 }
 
 
@@ -128,39 +138,39 @@ function main() {
 
     try {
         readline.question('Enter your choice: ', async function (choice) {
-        switch (choice) {
-            case '1':
-                await handleTrafficLights();
-                break;
-            case '2':
-                showParkingSubMenu();
-                readline.question('Enter your choice: ', async function (choice2) {
-                    switch (choice2) {
-                        case '1':
-                            await handleParkingCheckAvailability();
-                            break;
-                        case '2':
-                            await handleParkingReserveSpot();
-                            break;
-                        default:
-                            console.log("Invalid choice");
-                    }
+            switch (choice) {
+                case '1':
+                    await handleTrafficLights();
+                    break;
+                case '2':
+                    showParkingSubMenu();
+                    readline.question('Enter your choice: ', async function (choice2) {
+                        switch (choice2) {
+                            case '1':
+                                await handleParkingCheckAvailability();
+                                break;
+                            case '2':
+                                await handleParkingReserveSpot();
+                                break;
+                            default:
+                                console.log("Invalid choice");
+                        }
+                        readline.close();
+                    });
+                    break;
+                case '3':
+                    await handlePublicTransport();
                     readline.close();
-                });
-                break;
-            case '3':
-                await handlePublicTransport();
-                readline.close();
-                break;
-            default:
-                console.log("Invalid choice");
-                readline.close();
-        }
-    });
+                    break;
+                default:
+                    console.log("Invalid choice");
+                    readline.close();
+            }
+        });
     } catch (error) {
         console.error("Error handling main menu or sub menus:", error.message);
     }
-    
+
 }
 
 main();
