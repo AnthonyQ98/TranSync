@@ -126,7 +126,8 @@ async function handleParkingReserveSpot() {
 function main() {
     showMainMenu();
 
-    readline.question('Enter your choice: ', async function (choice) {
+    try {
+        readline.question('Enter your choice: ', async function (choice) {
         switch (choice) {
             case '1':
                 await handleTrafficLights();
@@ -156,6 +157,10 @@ function main() {
                 readline.close();
         }
     });
+    } catch (error) {
+        console.error("Error handling main menu or sub menus:", error.message);
+    }
+    
 }
 
 main();
