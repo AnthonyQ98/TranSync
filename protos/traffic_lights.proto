@@ -1,21 +1,32 @@
 syntax = "proto3";
 
+// Define the package name for the protocol buffers related to traffic lights.
 package trafficlights;
 
+// Define the TrafficLights service, which includes an RPC method to change signal timings.
 service TrafficLights {
+    // RPC method to change signal timings at a particular intersection.
     rpc ChangeSignalTimings (ChangeSignalRequest) returns (ChangeSignalResponse) {}
 }
 
+// Define the message structure for the request to change signal timings.
 message ChangeSignalRequest {
+    // Identifier for the intersection where signal timings are to be changed.
     string intersection_id = 1;
+    // List of signal timings to be changed.
     repeated SignalTiming signal_timings = 2;
 }
 
+// Define the structure for specifying signal timing.
 message SignalTiming {
+    // Color of the signal (e.g., "green", "yellow", "red").
     string color = 1;
+    // Duration of the signal in seconds.
     int32 duration_seconds = 2;
 }
 
+// Define the response message for the change signal timings RPC method.
 message ChangeSignalResponse {
+    // Message indicating the status of the signal timing change operation.
     string message = 1;
 }
