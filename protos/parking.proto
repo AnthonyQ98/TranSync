@@ -1,25 +1,39 @@
 syntax = "proto3";
 
+// Define the package name for the protocol buffers.
 package Parking;
 
+// Define the Parking service, which includes two RPC methods.
 service Parking {
+    // RPC method to check the availability of parking spots.
     rpc CheckAvailability (CheckAvailabilityRequest) returns (CheckAvailabilityResponse) {}
+
+    // RPC method to reserve parking spots.
     rpc ReserveSpot (ReserveSpotRequest) returns (ReserveSpotResponse) {}
 }
 
+// Define the message structure for checking parking spot availability.
 message CheckAvailabilityRequest {
+    // Identifier for the parking lot.
     string parking_lot_id = 1;
 }
 
+// Define the response message for checking parking spot availability.
 message CheckAvailabilityResponse {
+    // Number of available parking spots.
     int32 available_spots = 1;
 }
 
+// Define the message structure for reserving parking spots.
 message ReserveSpotRequest {
+    // Identifier for the parking lot.
     string parking_lot_id = 1;
+    // Number of spots to reserve.
     int32 num_spots = 2;
 }
 
+// Define the response message for reserving parking spots.
 message ReserveSpotResponse {
+    // Response message indicating the status of the reservation.
     string message = 1;
 }
