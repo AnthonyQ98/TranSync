@@ -16,7 +16,7 @@ function changeSignalTimings(call, callback) {
     } catch (error) {
         console.error('Error handling traffic lights:', error.message)
     }
-    
+
 }
 
 
