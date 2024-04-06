@@ -1,16 +1,24 @@
 syntax = "proto3";
 
+// Define the package name for the protocol buffers related to public transportation.
 package PublicTransport;
 
+// Define the PublicTransport service, which includes an RPC method to get information about the next bus.
 service PublicTransport {
+    // RPC method to retrieve information about the next bus arrival.
     rpc GetNextBus (NextBusRequest) returns (NextBusResponse) {}
 }
 
+// Define the message structure for the request to get information about the next bus.
 message NextBusRequest {
+    // Identifier for the bus stop.
     string bus_stop_id = 1;
 }
 
+// Define the response message for getting information about the next bus.
 message NextBusResponse {
+    // Number of the bus arriving next.
     string bus_number = 1;
+    // Estimated arrival time of the next bus.
     string arrival_time = 2;
 }
