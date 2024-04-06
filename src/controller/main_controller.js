@@ -54,27 +54,31 @@ async function handleTrafficLights() {
 }
 
 async function handlePublicTransport() {
-    const client = new publicTransportProto.PublicTransport('localhost:50051', grpc.credentials.createInsecure());
-    const busStopId = await new Promise((resolve) => readline.question('Enter Bus Stop ID: ', resolve));
+    try {
+        const client = new publicTransportProto.PublicTransport('localhost:50051', grpc.credentials.createInsecure());
+        const busStopId = await new Promise((resolve) => readline.question('Enter Bus Stop ID: ', resolve));
 
 
-    const body = {
-        busStopId: busStopId,
-    };
+        const body = {
+            busStopId: busStopId,
+        };
 
-    client.GetNextBus(body, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            if (response.busNumber == "") {
-                message = "Invalid bus number"
+        client.GetNextBus(body, function (err, response) {
+            if (err) {
+                console.error(err);
             } else {
-                message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
-            }
+                if (response.busNumber == "") {
+                    message = "Invalid bus number"
+                } else {
+                    message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
+                }
 
-            console.log(message);
-        }
-    });
+                console.log(message);
+            }
+        });
+    } catch (error) {
+        console.error('Error handling public transport bus information:', error.message)
+    }
 }
 
 async function handleParkingCheckAvailability() {
