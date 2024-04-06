@@ -27,26 +27,30 @@ function showParkingSubMenu() {
 
 
 async function handleTrafficLights() {
-    const client = new trafficLightsProto.TrafficLights('localhost:50051', grpc.credentials.createInsecure());
-    const intersectionId = await new Promise((resolve) => readline.question('Enter intersection ID: ', resolve));
-    const greenDuration = await new Promise((resolve) => readline.question('Enter duration for GREEN signal (in seconds): ', resolve));
-    const redDuration = await new Promise((resolve) => readline.question('Enter duration for RED signal (in seconds): ', resolve));
+    try {
+        const client = new trafficLightsProto.TrafficLights('localhost:50051', grpc.credentials.createInsecure());
+        const intersectionId = await new Promise((resolve) => readline.question('Enter intersection ID: ', resolve));
+        const greenDuration = await new Promise((resolve) => readline.question('Enter duration for GREEN signal (in seconds): ', resolve));
+        const redDuration = await new Promise((resolve) => readline.question('Enter duration for RED signal (in seconds): ', resolve));
 
-    const body = {
-        intersectionId: intersectionId,
-        signalTimings: [
-            { color: "GREEN", durationSeconds: parseInt(greenDuration) },
-            { color: "RED", durationSeconds: parseInt(redDuration) },
-        ]
-    };
+        const body = {
+            intersectionId: intersectionId,
+            signalTimings: [
+                { color: "GREEN", durationSeconds: parseInt(greenDuration) },
+                { color: "RED", durationSeconds: parseInt(redDuration) },
+            ]
+        };
 
-    client.ChangeSignalTimings(body, function (err, response) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(response.message);
-        }
-    });
+        client.ChangeSignalTimings(body, function (err, response) {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(response.message);
+            }
+        });
+    } catch (error) {
+        console.error('Error handling traffic lights:', error.message)
+    }
 }
 
 async function handlePublicTransport() {
