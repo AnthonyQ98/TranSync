@@ -70,29 +70,32 @@ async function handlePublicTransport() {
     try {
         // Create gRPC client for public transport service
         const client = new publicTransportProto.PublicTransport('localhost:50051', grpc.credentials.createInsecure());
-        // Get bus stop ID from user input
-        const busStopId = await new Promise((resolve) => readline.question('Enter Bus Stop ID: ', resolve));
 
-        // Prepare request body with bus stop ID
-        const body = {
-            busStopId: busStopId,
-        };
+        // Initialize the call for bidirectional streaming
+        const call = client.GetNextBus();
 
-        // Call GetNextBus RPC method and handle response
-        client.GetNextBus(body, function (err, response) {
-            if (err) {
-                console.error(err);
-            } else {
-                // Construct and display message with bus information
-                let message;
-                if (response.busNumber == "") {
-                    message = "Invalid bus number"
-                } else {
-                    message = `Bus Stop ID: ${body.busStopId}\nNext bus: ${response.busNumber}\nArriving: ${response.arrivalTime}`
-                }
-                console.log(message);
-            }
+        // Set up event listeners for receiving responses
+        call.on('data', function (response) {
+            // Process each response received from the server
+            console.log('Received response:', response);
         });
+
+        call.on('end', function () {
+            // Handle the end of the streaming
+            console.log('Streaming ended');
+        });
+
+        // Prompt user for input and send requests
+        while (true) {
+            const busStopId = await new Promise((resolve) => readline.question('Enter Bus Stop ID (press Enter to exit): ', resolve));
+            if (!busStopId) {
+                // If the user enters an empty string, end the streaming
+                call.end();
+                break;
+            }
+            // Send request to the server
+            call.write({ busStopId: busStopId });
+        }
     } catch (error) {
         console.error('Error handling public transport bus information:', error.message)
     }

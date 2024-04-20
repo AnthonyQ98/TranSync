@@ -5,8 +5,8 @@ package PublicTransport;
 
 // Define the PublicTransport service, which includes an RPC method to get information about the next bus.
 service PublicTransport {
-    // RPC method to retrieve information about the next bus arrival.
-    rpc GetNextBus (NextBusRequest) returns (NextBusResponse) {}
+    // Bidirectional Streaming RPC method to retrieve information about the next bus arrival.
+    rpc GetNextBus (stream NextBusRequest) returns (stream NextBusResponse) {}
 }
 
 // Define the message structure for the request to get information about the next bus.

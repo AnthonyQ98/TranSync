@@ -5,8 +5,8 @@ package Parking;
 
 // Define the Parking service, which includes two RPC methods.
 service Parking {
-    // RPC method to check the availability of parking spots.
-    rpc CheckAvailability (CheckAvailabilityRequest) returns (CheckAvailabilityResponse) {}
+    // Server-side Streaming RPC method to check the availability of parking spots
+    rpc CheckAvailability (CheckAvailabilityRequest) returns (stream CheckAvailabilityResponse) {}
 
     // RPC method to reserve parking spots.
     rpc ReserveSpot (ReserveSpotRequest) returns (ReserveSpotResponse) {}

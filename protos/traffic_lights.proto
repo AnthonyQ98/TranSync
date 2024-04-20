@@ -5,8 +5,8 @@ package trafficlights;
 
 // Define the TrafficLights service, which includes an RPC method to change signal timings.
 service TrafficLights {
-    // RPC method to change signal timings at a particular intersection.
-    rpc ChangeSignalTimings (ChangeSignalRequest) returns (ChangeSignalResponse) {}
+    // Client-side Streaming RPC method to change signal timings at a particular intersection.
+    rpc ChangeSignalTimings (stream ChangeSignalRequest) returns (ChangeSignalResponse) {}
 }
 
 // Define the message structure for the request to change signal timings.
