@@ -1,5 +1,5 @@
 // Function to handle checking availability of parking spots
-function checkAvailability(call, callback) {
+function checkAvailability(call) {
     try {
         const request = call.request;
         console.log('Received request:', request);
@@ -11,12 +11,17 @@ function checkAvailability(call, callback) {
         } else {
             spots = 50; // Assume there are 50 spots available
         }
-        // Prepare response with available spots count
-        const response = {
-            availableSpots: spots
-        };
-        // Send response back to client
-        callback(null, response);
+        // Send each response with available spots count
+        for (let i = 0; i < spots; i++) {
+            // Prepare response with available spots count
+            const response = {
+                availableSpots: spots - i
+            };
+            // Send response back to client
+            call.write(response);
+        }
+        // End the streaming once all responses are sent
+        call.end();
     } catch (error) {
         // Handle errors during request processing
         console.error("Error handling client request for checking availability:", error.message)

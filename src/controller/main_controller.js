@@ -118,24 +118,30 @@ async function handleParkingCheckAvailability() {
     try {
         // Create gRPC client for parking service
         const client = new parkingProto.Parking('localhost:50051', grpc.credentials.createInsecure());
+
         // Get parking lot ID from user input
         const parkingLotId = await new Promise((resolve) => readline.question('Enter Parking Lot ID: ', resolve));
 
-        // Prepare request body with parking lot ID
-        const body = {
-            parkingLotId: parkingLotId,
-        };
+        // Initialize the call for server-side streaming
+        const call = client.CheckAvailability({ parkingLotId: parkingLotId });
 
-        // Call CheckAvailability RPC method and handle response
-        client.CheckAvailability(body, function (err, response) {
-            if (err) {
-                console.error(err);
-            } else {
-                // Display message with available spots information
-                const message = `Available spots at ${parkingLotId}: ${response.availableSpots}`;
-                console.log(message);
-            }
+        // Set up event listener for receiving responses
+        call.on('data', function (response) {
+            // Process each response received from the server
+            const message = `Available spots at ${parkingLotId}: ${response.availableSpots}`;
+            console.log(message);
         });
+
+        call.on('end', function () {
+            // Handle the end of the streaming
+            console.log('Streaming ended');
+        });
+
+        // Wait for user input to end the streaming
+        await new Promise((resolve) => readline.question('Press Enter to end streaming...', resolve));
+
+        // End the streaming
+        call.cancel();
     } catch (error) {
         console.error('Error checking parking availability:', error.message)
     }
