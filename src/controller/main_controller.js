@@ -37,29 +37,41 @@ async function handleTrafficLights() {
     try {
         // Create gRPC client for traffic lights service
         const client = new trafficLightsProto.TrafficLights('localhost:50051', grpc.credentials.createInsecure());
-        // Get intersection ID from user input
-        const intersectionId = await new Promise((resolve) => readline.question('Enter intersection ID: ', resolve));
-        // Get signal timings from user input
-        const greenDuration = await new Promise((resolve) => readline.question('Enter duration for GREEN signal (in seconds): ', resolve));
-        const redDuration = await new Promise((resolve) => readline.question('Enter duration for RED signal (in seconds): ', resolve));
 
-        // Prepare request body with intersection ID and signal timings
-        const body = {
-            intersectionId: intersectionId,
-            signalTimings: [
-                { color: "GREEN", durationSeconds: parseInt(greenDuration) },
-                { color: "RED", durationSeconds: parseInt(redDuration) },
-            ]
-        };
-
-        // Call ChangeSignalTimings RPC method and handle response
-        client.ChangeSignalTimings(body, function (err, response) {
-            if (err) {
-                console.error(err);
+        // Initialize the call for client-side streaming
+        const call = client.ChangeSignalTimings(function (error, response) {
+            if (error) {
+                console.error(error);
             } else {
                 console.log(response.message);
             }
         });
+
+        // Prompt user for input and send requests
+        while (true) {
+            const intersectionId = await new Promise((resolve) => readline.question('Enter intersection ID (press Enter to exit): ', resolve));
+            if (!intersectionId) {
+                // If the user enters an empty string, end the streaming
+                call.end();
+                break;
+            }
+
+            // Get signal timings from user input
+            const greenDuration = await new Promise((resolve) => readline.question('Enter duration for GREEN signal (in seconds): ', resolve));
+            const redDuration = await new Promise((resolve) => readline.question('Enter duration for RED signal (in seconds): ', resolve));
+
+            // Prepare request body with intersection ID and signal timings
+            const request = {
+                intersectionId: intersectionId,
+                signalTimings: [
+                    { color: "GREEN", durationSeconds: parseInt(greenDuration) },
+                    { color: "RED", durationSeconds: parseInt(redDuration) },
+                ]
+            };
+
+            // Send request to the server
+            call.write(request);
+        }
     } catch (error) {
         console.error('Error handling traffic lights:', error.message)
     }
